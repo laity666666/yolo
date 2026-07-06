@@ -73,16 +73,40 @@ def test_export_engine():
 
 def test_3d_iou():
     """Test 3D IoU computation: identical, no overlap, and partial overlap."""
-    box = Box3D(center_3d=(10.0, 2.0, 30.0), dimensions=(3.88, 1.63, 1.53), orientation=0.0,
-                class_label="Car", class_id=0, confidence=0.95)
+    box = Box3D(
+        center_3d=(10.0, 2.0, 30.0),
+        dimensions=(3.88, 1.63, 1.53),
+        orientation=0.0,
+        class_label="Car",
+        class_id=0,
+        confidence=0.95,
+    )
     assert abs(compute_3d_iou(box, box) - 1.0) < 1e-6
 
-    far_box = Box3D(center_3d=(100.0, 2.0, 30.0), dimensions=(3.88, 1.63, 1.53), orientation=0.0,
-                    class_label="Car", class_id=0, confidence=0.95)
+    far_box = Box3D(
+        center_3d=(100.0, 2.0, 30.0),
+        dimensions=(3.88, 1.63, 1.53),
+        orientation=0.0,
+        class_label="Car",
+        class_id=0,
+        confidence=0.95,
+    )
     assert compute_3d_iou(box, far_box) == 0.0
 
-    near_box = Box3D(center_3d=(11.0, 2.0, 30.0), dimensions=(4.0, 2.0, 2.0), orientation=0.0,
-                     class_label="Car", class_id=0, confidence=0.95)
-    box2 = Box3D(center_3d=(10.0, 2.0, 30.0), dimensions=(4.0, 2.0, 2.0), orientation=0.0,
-                 class_label="Car", class_id=0, confidence=0.95)
+    near_box = Box3D(
+        center_3d=(11.0, 2.0, 30.0),
+        dimensions=(4.0, 2.0, 2.0),
+        orientation=0.0,
+        class_label="Car",
+        class_id=0,
+        confidence=0.95,
+    )
+    box2 = Box3D(
+        center_3d=(10.0, 2.0, 30.0),
+        dimensions=(4.0, 2.0, 2.0),
+        orientation=0.0,
+        class_label="Car",
+        class_id=0,
+        confidence=0.95,
+    )
     assert 0.0 < compute_3d_iou(box2, near_box) < 1.0
