@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 from ultralytics.nn.modules.conv import Conv
 from ultralytics.nn.modules.head import Detect
@@ -69,16 +69,15 @@ def _deep_branch(in_ch: int, out_ch: int, hidden: int = 64) -> nn.Sequential:
 class Stereo3DDetHead(Detect):
     """Multi-scale stereo 3D detection head (Pose-pattern).
 
-    Receives P3/P4/P5 feature maps from FPN+PAN neck, plus optional cost volume
-    features that are fed ONLY to depth branches (lr_distance, depth) at P3 scale.
-    This keeps P3/P4/P5 clean for 2D detection, avoiding 2D-3D task conflict.
+    Receives P3/P4/P5 feature maps from FPN+PAN neck, plus optional cost volume features that are fed ONLY to depth
+    branches (lr_distance, depth) at P3 scale. This keeps P3/P4/P5 clean for 2D detection, avoiding 2D-3D task conflict.
 
     Args:
         nc: Number of classes.
         reg_max: DFL channels (forced to 1).
         end2end: End-to-end mode (forced to False).
-        ch: Tuple of per-scale input channels, e.g. (256, 512, 1024) or
-            (256, 512, 1024, 64) where the 4th element is cost volume channels.
+        ch: Tuple of per-scale input channels, e.g. (256, 512, 1024) or (256, 512, 1024, 64) where the 4th element is
+            cost volume channels.
     """
 
     def __init__(self, nc: int = 3, reg_max: int = 1, end2end: bool = False, ch: tuple = ()):
@@ -96,9 +95,7 @@ class Stereo3DDetHead(Detect):
         self.reg_max = 1
         self.no = nc + 4  # 4 direct bbox offsets, no distribution
         c2 = max(16, ch[0] // 4, 4)
-        self.cv2 = nn.ModuleList(
-            nn.Sequential(Conv(x, c2, 3), Conv(c2, c2, 3), nn.Conv2d(c2, 4, 1)) for x in ch
-        )
+        self.cv2 = nn.ModuleList(nn.Sequential(Conv(x, c2, 3), Conv(c2, c2, 3), nn.Conv2d(c2, 4, 1)) for x in ch)
         self.dfl = nn.Identity()
 
         self.aux_specs = dict(AUX_SPECS)  # mutable copy
@@ -131,7 +128,7 @@ class Stereo3DDetHead(Detect):
     @property
     def one2many(self):
         """Returns the one-to-many head components including aux branches."""
-        return dict(box_head=self.cv2, cls_head=self.cv3, aux_branches=self.aux)
+        return {"box_head": self.cv2, "cls_head": self.cv3, "aux_branches": self.aux}
 
     def forward_head(
         self, x: list[torch.Tensor], box_head=None, cls_head=None, aux_branches=None
