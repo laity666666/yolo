@@ -77,7 +77,11 @@ class YOLO(Model):
             # Continue with default YOLO initialization
             super().__init__(model=model, task=task, verbose=verbose)
             # Check if model has a subscriptable 'model' attribute before accessing with [-1]
-            if hasattr(self.model, "model") and isinstance(self.model.model, (list, tuple)) and len(self.model.model) > 0:
+            if (
+                hasattr(self.model, "model")
+                and isinstance(self.model.model, (list, tuple))
+                and len(self.model.model) > 0
+            ):
                 if "RTDETR" in self.model.model[-1]._get_name():  # if RTDETR head
                     from ultralytics import RTDETR
 
@@ -330,7 +334,7 @@ class YOLOE(Model):
         # Verify no background class is present
         assert " " not in classes
         assert isinstance(self.model, YOLOEModel)
-        if sorted(list(self.model.names.values())) != sorted(classes):
+        if sorted(self.model.names.values()) != sorted(classes):
             if embeddings is None:
                 embeddings = self.get_text_pe(classes)  # generate text embeddings if not provided
             self.model.set_classes(classes, embeddings)
@@ -369,7 +373,7 @@ class YOLOE(Model):
         self,
         source=None,
         stream: bool = False,
-        visual_prompts: dict[str, list] = {},
+        visual_prompts: dict[str, list] | None = None,
         refer_image=None,
         predictor=yolo.yoloe.YOLOEVPDetectPredictor,
         **kwargs,
@@ -398,6 +402,8 @@ class YOLOE(Model):
             >>> prompts = {"bboxes": [[10, 20, 100, 200]], "cls": ["person"]}
             >>> results = model.predict("path/to/image.jpg", visual_prompts=prompts)
         """
+        if visual_prompts is None:
+            visual_prompts = {}
         if len(visual_prompts):
             assert "bboxes" in visual_prompts and "cls" in visual_prompts, (
                 f"Expected 'bboxes' and 'cls' in visual prompts, but got {visual_prompts.keys()}"
