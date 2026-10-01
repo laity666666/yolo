@@ -8,7 +8,7 @@ from copy import deepcopy
 from pathlib import Path
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 from ultralytics.nn.autobackend import check_class_names
 from ultralytics.nn.modules import (
@@ -1474,11 +1474,9 @@ class SafeClass:
 
     def __init__(self, *args, **kwargs):
         """Initialize SafeClass instance, ignoring all arguments."""
-        pass
 
     def __call__(self, *args, **kwargs):
         """Run SafeClass instance, ignoring all arguments."""
-        pass
 
 
 class SafeUnpickler(pickle.Unpickler):
@@ -1818,9 +1816,18 @@ def parse_model(d, ch, verbose=True):
             args.extend([reg_max, end2end, [ch[x] for x in f]])
             if m is Segment or m is YOLOESegment or m is Segment26 or m is YOLOESegment26:
                 args[2] = make_divisible(min(args[2], max_channels) * width, 8)
-            if m in {Detect, YOLOEDetect, Segment, Segment26, YOLOESegment, YOLOESegment26, Pose, Pose26, OBB, OBB26} or (
-                Stereo3DDetHead is not None and m is Stereo3DDetHead
-            ):
+            if m in {
+                Detect,
+                YOLOEDetect,
+                Segment,
+                Segment26,
+                YOLOESegment,
+                YOLOESegment26,
+                Pose,
+                Pose26,
+                OBB,
+                OBB26,
+            } or (Stereo3DDetHead is not None and m is Stereo3DDetHead):
                 m.legacy = legacy
         elif m is SemanticSegment:
             args.append([ch[x] for x in f])  # nc, ch tuple
@@ -1849,7 +1856,11 @@ def parse_model(d, ch, verbose=True):
 
         # Special handling for TorchVision to pass in_channels
         if m is TorchVision:
-            m_ = torch.nn.Sequential(*(m(*args, in_channels=c1) for _ in range(n))) if n > 1 else m(*args, in_channels=c1)
+            m_ = (
+                torch.nn.Sequential(*(m(*args, in_channels=c1) for _ in range(n)))
+                if n > 1
+                else m(*args, in_channels=c1)
+            )
         else:
             m_ = torch.nn.Sequential(*(m(*args) for _ in range(n))) if n > 1 else m(*args)  # module
         t = str(m)[8:-2].replace("__main__.", "")  # module type
@@ -1922,7 +1933,7 @@ def guess_model_task(model):
         # Check for stereo flag first (highest priority)
         if cfg.get("stereo") is True:
             return "s3d"
-        
+
         m = cfg["head"][-1][-2].lower()  # output module name
         if m in {"classify", "classifier", "cls", "fc"}:
             return "classify"
