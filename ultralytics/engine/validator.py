@@ -198,7 +198,9 @@ class BaseValidator:
                         f"Setting batch={self.args.batch} input of shape ({self.args.batch}, 3, {imgsz[0]}, {imgsz[1]})"
                     )
                 else:
-                    LOGGER.info(f"Setting batch={self.args.batch} input of shape ({self.args.batch}, 3, {imgsz}, {imgsz})")
+                    LOGGER.info(
+                        f"Setting batch={self.args.batch} input of shape ({self.args.batch}, 3, {imgsz}, {imgsz})"
+                    )
 
             if str(self.args.data).rsplit(".", 1)[-1] in {"yaml", "yml"}:
                 # For s3d, use task-specific get_dataset() to handle stereo paths/metadata
@@ -368,15 +370,12 @@ class BaseValidator:
 
     def init_metrics(self, model):
         """Initialize performance metrics for the YOLO model."""
-        pass
 
     def update_metrics(self, preds, batch):
         """Update metrics based on predictions and batch."""
-        pass
 
     def finalize_metrics(self):
         """Finalize and return all metrics."""
-        pass
 
     def get_stats(self):
         """Return statistics about the model's performance."""
@@ -384,15 +383,12 @@ class BaseValidator:
 
     def gather_stats(self):
         """Gather statistics from all the GPUs during DDP training to GPU 0."""
-        pass
 
     def print_results(self):
         """Print the results of the model's predictions."""
-        pass
 
     def get_desc(self):
         """Get description of the YOLO model."""
-        pass
 
     @property
     def metric_keys(self):
@@ -408,16 +404,12 @@ class BaseValidator:
 
     def plot_val_samples(self, batch, ni):
         """Plot validation samples during training."""
-        pass
 
     def plot_predictions(self, batch, preds, ni):
         """Plot YOLO model predictions on batch images."""
-        pass
 
     def pred_to_json(self, preds, batch):
         """Convert predictions to JSON format."""
-        pass
 
     def eval_json(self, stats):
         """Evaluate and return JSON format of prediction statistics."""
-        pass

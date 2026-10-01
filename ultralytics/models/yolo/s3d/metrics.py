@@ -47,8 +47,8 @@ def classify_difficulty(truncated: float, occluded: int, bbox_height_2d: float) 
 def compute_ap_r40(recall: np.ndarray, precision: np.ndarray) -> float:
     """Compute AP using 40-point interpolation (KITTI R40 standard).
 
-    Uses max-precision-at-recall-threshold method (not COCO-style sentinel interpolation).
-    For each of 40 recall thresholds, finds the maximum precision at recall >= threshold.
+    Uses max-precision-at-recall-threshold method (not COCO-style sentinel interpolation). For each of 40 recall
+    thresholds, finds the maximum precision at recall >= threshold.
 
     Args:
         recall: Cumulative recall values (ascending).
@@ -74,8 +74,8 @@ def compute_ap_r40(recall: np.ndarray, precision: np.ndarray) -> float:
 class Stereo3DDetMetrics(SimpleClass, DataExportMixin):
     """3D Detection Metrics Calculator with KITTI-standard R40 evaluation.
 
-    Computes AP3D at IoU thresholds 0.5 and 0.7 for each class and difficulty
-    level (Easy, Moderate, Hard) using 40-point recall interpolation.
+    Computes AP3D at IoU thresholds 0.5 and 0.7 for each class and difficulty level (Easy, Moderate, Hard) using
+    40-point recall interpolation.
 
     Stats format (per image):
         pred_boxes: list[Box3D] with confidence and class_id
@@ -85,7 +85,9 @@ class Stereo3DDetMetrics(SimpleClass, DataExportMixin):
         pred_heights_2d: np.ndarray (N_pred,) 2D bbox heights in pixels
     """
 
-    def __init__(self, names: dict[int, str] = {}) -> None:
+    def __init__(self, names: dict[int, str] | None = None) -> None:
+        if names is None:
+            names = {}
         self.names = names
         self.nc = len(names) if names else 0
         self.stats: list[dict[str, Any]] = []
